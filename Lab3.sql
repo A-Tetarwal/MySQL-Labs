@@ -29,18 +29,19 @@ INSERT INTO Payments (Payment_ID, DATE ,Staff_ID ,AMOUNT) VALUES
 
 -- Exercise(A)
 -- 1
-select * from staff inner join payments on staff.ID=payments.staff_ID;
+SELECT * FROM staff INNER JOIN payments ON staff.ID = payments.staff_ID;
 
 -- 2
-select * from staff left join payments on staff.ID=payments.staff_ID;
+SELECT * FROM staff LEFT JOIN payments ON staff.ID = payments.staff_ID;
 
 -- 3
-select * from staff right join payments on staff.ID=payments.staff_ID;
+SELECT * FROM staff RIGHT JOIN payments ON staff.ID = payments.staff_ID;
 
 -- 4
-select * from staff left join payments on staff.ID=payments.staff_ID 
-union
-select * from staff right join payments on staff.ID=payments.staff_ID;
+SELECT * FROM staff LEFT JOIN payments ON staff.ID = payments.staff_ID 
+UNION 
+SELECT * FROM staff RIGHT JOIN payments ON staff.ID = payments.staff_ID;
+
 
 
 -- Exercise(B-1)
@@ -62,6 +63,8 @@ INSERT INTO Customer (Customer_Id, C_Name, Email, Address) VALUES
 (104, 'Vikram','vikram@yahoo.com', 'Chennai'),
 (105,'Yuvika','yuvika@gmail.com','Kolkata');
 
+select * from customer;
+
 -- Creating Order table
 CREATE TABLE Order1 (
     Order_Id INT,
@@ -80,6 +83,8 @@ INSERT INTO Order1 (Order_Id, DATE ,Customer_Id ,Contact ) VALUES
 ('202263005','2019-01-10','104','7895136324'), 
 ('202262002','2011-06-13','105','6351789641');
 
+select * from Order1;
+
 -- query 1
 SELECT Customer_Id, C_Name
 FROM Customer
@@ -96,9 +101,10 @@ FROM Customer C
 JOIN Order1 O ON C.Customer_Id = O.Customer_Id;
 
 -- query 4
-SELECT Customer_Id, C_Name, Email, Address, Contact
-FROM Customer
-join order1 on Customer.customer_id= order1.customer_id;
+SELECT C.Customer_Id, C.C_name, C.Email, C.Address, O.Contact
+FROM Customer AS C
+JOIN Order1 AS O ON C.Customer_Id = O.Customer_Id;
+
 
 
 -- Exercise(B-2)
@@ -121,6 +127,8 @@ INSERT INTO Books (ISBN, Title, Unit_price, Author_Name, Publisher_name, Publish
 (1004, 'Giving Good Weight', 1280,'John McPhee','Spiegel & Grau' ,2006), 
 (1005,'Writing' ,1700,'Marguerite Duras','Paperback' ,2001);
 
+select * from books;
+
 ALTER TABLE Books
 ADD INDEX idx_author_name (Author_Name);
 
@@ -139,6 +147,8 @@ INSERT INTO Authors (Author,Country) VALUES
 ('Delia Sherman','Japan'), 
 ('John McPhee','U.S.A'), 
 ('Marguerite Duras','Germany');
+
+select * from Authors;
 
 -- query 1
 SELECT COUNT(*) AS Total_Books
@@ -174,7 +184,7 @@ JOIN Authors A ON B.Author_Name = A.Author;
 SELECT B.Author_Name, B.Title
 FROM Books B
 JOIN Authors A ON B.Author_Name = A.Author
-WHERE A.Country = 'UK';
+WHERE A.Country = 'U.K.';
 
 -- query to find second maximum unit_price in table Books 
 SELECT unit_price
@@ -201,6 +211,8 @@ INSERT INTO Salesman (salesman_id, name, city, commission) VALUES
 (5006, 'Mc Lyon', 'Paris', 0.14),
 (5007, 'Paul Adam', 'Rome', 0.12);
 
+select * from salesman;
+
 -- Creating Customer table
 CREATE TABLE Customer_ (
     customer_id INT PRIMARY KEY,
@@ -219,25 +231,20 @@ INSERT INTO Customer_ (customer_id, cust_name, city, grade, salesman_id) VALUES
 (3005,'Steve Chen','Paris' ,100 ,5006 ),
 (3006,'Just in rudd','New Jersey' ,300 ,5007 );
 
+select * from customer_;
+
+-- query 1
+UPDATE Salesman
+SET commission = commission * 1.0015;
+
 -- query 2
-select * from salesman as s inner join customer_ as c on s.city= c.city;
+SELECT * 
+FROM Salesman AS s 
+INNER JOIN Customer_ AS c 
+ON s.city = c.city;
 
 -- query 3
-select * from salesman as s left join customer_ as c on s.city != c.city;
-
-
--- trials for query 3
-SELECT city, COUNT(*) AS num_salesmen, COUNT(c.city) AS num_customers
-FROM (
-    SELECT s.salesman_id, s.name AS salesman_name, s.city AS salesman_city, 
-           c.customer_id, c.cust_name AS customer_name, c.city AS customer_city
-    FROM salesman s
-    LEFT JOIN customer_ c ON s.city != c.city
-) AS joined_data
-GROUP BY city;
-
-SELECT s.salesman_id, s.name AS salesman_name, s.city AS salesman_city
+SELECT s.*
 FROM Salesman s
-LEFT JOIN Customer_ c ON s.city = c.city AND s.salesman_id = c.salesman_id
+LEFT JOIN Customer_ c ON s.city = c.city
 WHERE c.city IS NULL;
-
